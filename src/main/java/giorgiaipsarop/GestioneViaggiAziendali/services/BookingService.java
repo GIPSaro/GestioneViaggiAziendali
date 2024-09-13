@@ -4,6 +4,7 @@ package giorgiaipsarop.GestioneViaggiAziendali.services;
 import giorgiaipsarop.GestioneViaggiAziendali.entities.Booking;
 import giorgiaipsarop.GestioneViaggiAziendali.entities.Employee;
 import giorgiaipsarop.GestioneViaggiAziendali.entities.Trip;
+import giorgiaipsarop.GestioneViaggiAziendali.payloads.BookingPayload;
 import giorgiaipsarop.GestioneViaggiAziendali.repository.BookingRepository;
 import giorgiaipsarop.GestioneViaggiAziendali.repository.EmployeeRepository;
 import giorgiaipsarop.GestioneViaggiAziendali.repository.TripRepository;
@@ -37,14 +38,11 @@ public class BookingService {
         return bookingRepository.findAll();
     }
 
-    public Booking updateBooking(UUID id, Booking bookingDetails) {
+    public Booking updateBooking(UUID id, BookingPayload bookingPayload, Trip trip, Employee employee) {
         return bookingRepository.findById(id).map(booking -> {
-            booking.setRequestDate(bookingDetails.getRequestDate());
-            booking.setNotes(bookingDetails.getNotes());
-            booking.setPreferences(bookingDetails.getPreferences());
-
-            Trip trip = tripRepository.findById(bookingDetails.getTrip().getId()).orElse(null);
-            Employee employee = employeeRepository.findById(bookingDetails.getEmployee().getId()).orElse(null);
+            booking.setRequestDate(bookingPayload.requestDate());
+            booking.setNotes(bookingPayload.notes());
+            booking.setPreferences(bookingPayload.preferences());
 
             if (trip != null) {
                 booking.setTrip(trip);

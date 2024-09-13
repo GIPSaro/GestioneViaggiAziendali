@@ -3,6 +3,7 @@ package giorgiaipsarop.GestioneViaggiAziendali.controllers;
 import giorgiaipsarop.GestioneViaggiAziendali.TripStatus;
 import giorgiaipsarop.GestioneViaggiAziendali.entities.Trip;
 import giorgiaipsarop.GestioneViaggiAziendali.payloads.TripPayload;
+import giorgiaipsarop.GestioneViaggiAziendali.payloads.TripStatusPayload;
 import giorgiaipsarop.GestioneViaggiAziendali.services.TripService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,7 @@ public class TripController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<Trip> getTripById(@PathVariable UUID id) {
         Optional<Trip> trip = tripService.getTripById(id);
@@ -67,6 +69,21 @@ public class TripController {
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<Trip> updateTripStatus(@PathVariable UUID id, @RequestBody @Valid TripStatusPayload payload) {
+        try {
+            TripStatus status = TripStatus.valueOf(payload.getStatus());
+            Trip updatedTrip = tripService.updateTripStatus(id, status);
+            if (updatedTrip != null) {
+                return ResponseEntity.ok(updatedTrip);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
 }

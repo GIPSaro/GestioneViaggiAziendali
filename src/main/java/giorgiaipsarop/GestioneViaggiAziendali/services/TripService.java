@@ -44,11 +44,18 @@ public class TripService {
         tripRepository.deleteById(id);
     }
 
-    private void validateTrip(Trip trip) {
+    public void validateTrip(Trip trip) {
         if (trip.getStatus() == TripStatus.IN_PROGRAMMA && trip.getDate().isBefore(LocalDate.now())) {
             throw new IllegalArgumentException("La data del viaggio in programma deve essere futura");
         } else if (trip.getStatus() == TripStatus.COMPLETATO && trip.getDate().isAfter(LocalDate.now())) {
             throw new IllegalArgumentException("La data del viaggio completato non può essere futura");
         }
+
+    }
+    public Trip updateTripStatus(UUID id, TripStatus status) {
+        return tripRepository.findById(id).map(trip -> {
+            trip.setStatus(status);
+            return tripRepository.save(trip);
+        }).orElse(null);
     }
 }
