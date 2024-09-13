@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,6 +35,7 @@ public class TripService {
             trip.setDestination(tripDetails.getDestination());
             trip.setDate(tripDetails.getDate());
             trip.setStatus(tripDetails.getStatus());
+            validateTrip(trip); // Validazione dell'aggiornamento
             return tripRepository.save(trip);
         }).orElse(null);
     }
@@ -41,10 +44,11 @@ public class TripService {
         tripRepository.deleteById(id);
     }
 
-    public Trip updateTripStatus(UUID id, String status) {
-        return tripRepository.findById(id).map(trip -> {
-            trip.setStatus(TripStatus.valueOf(status));
-            return tripRepository.save(trip);
-        }).orElse(null);
+    private void validateTrip(Trip trip) {
+        if (trip.getStatus() == TripStatus.IN_PROGRAMMA && trip.getDate().isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("La data del viaggio in programma deve essere futura");
+        } else if (trip.getStatus() == TripStatus.COMPLETATO && trip.getDate().isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("La data del viaggio completato non può essere futura");
+        }
     }
 }

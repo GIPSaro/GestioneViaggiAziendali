@@ -1,11 +1,16 @@
 package giorgiaipsarop.GestioneViaggiAziendali.services;
 
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import giorgiaipsarop.GestioneViaggiAziendali.entities.Employee;
 import giorgiaipsarop.GestioneViaggiAziendali.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
+import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -15,6 +20,8 @@ public class EmployeeService {
     @Autowired
     private EmployeeRepository employeeRepository;
 
+    @Autowired
+    private Cloudinary cloudinary;
     public Employee createEmployee(Employee employee) {
         return employeeRepository.save(employee);
     }
@@ -40,5 +47,13 @@ public class EmployeeService {
 
     public void deleteEmployee(UUID id) {
         employeeRepository.deleteById(id);
+    }
+    public Employee createEmployee(Employee employee, byte[] profileImage) throws IOException {
+        if (profileImage != null) {
+            Map uploadResult = cloudinary.uploader().upload(profileImage, ObjectUtils.emptyMap());
+            String imageUrl = (String) uploadResult.get("url");
+            employee.setProfileImage(imageUrl);
+        }
+        return employeeRepository.save(employee);
     }
 }

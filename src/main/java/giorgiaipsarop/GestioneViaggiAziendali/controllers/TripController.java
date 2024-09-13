@@ -29,11 +29,15 @@ public class TripController {
 
     @PostMapping
     public ResponseEntity<Trip> createTrip(@RequestBody @Valid TripPayload payload) {
-        Trip trip = new Trip(payload.destination(), payload.date(), TripStatus.valueOf(payload.status()));
-        Trip createdTrip = tripService.createTrip(trip);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdTrip);
-    }
 
+        try {
+            Trip trip = new Trip(payload.destination(), payload.date(), TripStatus.valueOf(payload.status()));
+            Trip createdTrip = tripService.createTrip(trip);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdTrip);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
     @GetMapping("/{id}")
     public ResponseEntity<Trip> getTripById(@PathVariable UUID id) {
         Optional<Trip> trip = tripService.getTripById(id);
