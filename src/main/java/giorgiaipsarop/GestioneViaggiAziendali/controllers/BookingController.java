@@ -25,7 +25,7 @@ public class BookingController {
     private final TripService tripService;
 
     @PostMapping
-    public ResponseEntity<Booking> createBooking(@RequestBody BookingPayload bookingPayload) {
+    public ResponseEntity<String> createBooking(@RequestBody BookingPayload bookingPayload) {
         try {
             UUID employeeId = UUID.fromString(bookingPayload.employeeId());
             UUID tripId = UUID.fromString(bookingPayload.tripId());
@@ -34,7 +34,7 @@ public class BookingController {
             Optional<Trip> tripOpt = tripService.getTripById(tripId);
 
             if (employeeOpt.isEmpty() || tripOpt.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Dipendente o viaggio non trovato", HttpStatus.BAD_REQUEST);
             }
 
             Employee employee = employeeOpt.get();
@@ -48,13 +48,13 @@ public class BookingController {
                     employee
             );
 
-            Booking savedBooking = bookingService.createBooking(booking);
-            return new ResponseEntity<>(savedBooking, HttpStatus.CREATED);
+            bookingService.createBooking(booking);
+            return new ResponseEntity<>("Prenotazione creata con successo", HttpStatus.CREATED);
+
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-
     @GetMapping("/{id}")
     public ResponseEntity<Booking> getBookingById(@PathVariable UUID id) {
         return bookingService.getBookingById(id)

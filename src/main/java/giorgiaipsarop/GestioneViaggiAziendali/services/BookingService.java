@@ -27,6 +27,14 @@ public class BookingService {
     private EmployeeRepository employeeRepository;
 
     public Booking createBooking(Booking booking) {
+        
+        boolean exists = bookingRepository.existsByEmployeeIdAndRequestDate(
+                booking.getEmployee().getId(), booking.getRequestDate());
+
+        if (exists) {
+            throw new IllegalArgumentException("Il dipendente ha già una prenotazione per questo giorno");
+        }
+
         return bookingRepository.save(booking);
     }
 
