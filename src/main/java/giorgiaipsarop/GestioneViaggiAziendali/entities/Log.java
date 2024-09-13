@@ -20,11 +20,8 @@ public class Log {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private UUID id;
-
     private LocalDateTime timestamp;
-
     private String message;
-
     private String level;
 
     public Log(LocalDateTime timestamp, String message, String level) {

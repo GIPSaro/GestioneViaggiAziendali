@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public record TripPayload (
@@ -11,7 +12,7 @@ public record TripPayload (
         String destination,
         @NotNull(message = "La data è obbligatoria")
         @Future(message = "La data deve essere una data futura")
-        Date date,
+        LocalDate date,
         @NotEmpty(message = "Lo stato non può essere vuoto")
         String status
 ){

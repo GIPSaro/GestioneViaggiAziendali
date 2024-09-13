@@ -24,11 +24,14 @@ public class Employee {
     private String firstName;
     private String lastName;
     private String email;
+    @Column(name = "profile_image")
+    private String profileImage;
 
     public Employee(String username, String firstName, String lastName, String email) {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.profileImage = profileImage;
     }
 }
